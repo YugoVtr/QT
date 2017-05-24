@@ -1,0 +1,14 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\Persistencia.o
+./debug\Piloto.o
+./debug\TemplateMethodOrdenacao.o
+./debug\OrdenarPorNome.o
+./debug\OrdenarPorCodigo.o
+./debug\OrdenarPorEquipe_Nome.o
+./debug\OrdenarPorPais_Nome.o
+./debug\OrdenarPorMotor_Equipe_Nome.o
+./debug\OrdenarPorPontuacao_Idade.o
+./debug\moc_mainwindow.o
+);

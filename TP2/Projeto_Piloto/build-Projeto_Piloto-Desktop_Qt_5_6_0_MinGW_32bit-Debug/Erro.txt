@@ -1,0 +1,4 @@
+ERRO: Linha 13: 110,Lewis Hamilton,Reino Unido ,27,Mercedes,Mercedes 
+ERRO: Linha 27: 121,Adrian Sutil,Alemanha,ForceIndia,Mercedes,19
+ERRO: Linha 29: 405,Juan Pablo Montoya,Russia ,21,ForceIndia,Mercedes,65,
+ERRO: Linha 31: 407,Graham Rahal,Italia,24,Mercedes,Mercedes----------

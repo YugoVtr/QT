@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Imagens/carregar.png</file>
+        <file>Imagens/limpar.png</file>
+        <file>Imagens/pesquisar.png</file>
+        <file>Imagens/PUCGO.png</file>
+        <file>Imagens/mainWindow.png</file>
+    </qresource>
+</RCC>

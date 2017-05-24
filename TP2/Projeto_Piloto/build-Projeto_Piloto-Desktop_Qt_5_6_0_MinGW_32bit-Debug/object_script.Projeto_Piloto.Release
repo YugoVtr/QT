@@ -1,0 +1,14 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\Persistencia.o
+./release\Piloto.o
+./release\TemplateMethodOrdenacao.o
+./release\OrdenarPorNome.o
+./release\OrdenarPorCodigo.o
+./release\OrdenarPorEquipe_Nome.o
+./release\OrdenarPorPais_Nome.o
+./release\OrdenarPorMotor_Equipe_Nome.o
+./release\OrdenarPorPontuacao_Idade.o
+./release\moc_mainwindow.o
+);

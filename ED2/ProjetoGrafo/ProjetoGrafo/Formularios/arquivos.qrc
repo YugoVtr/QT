@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>../Arquivos/clear.png</file>
+        <file>../Arquivos/include.png</file>
+        <file>../Arquivos/chevron_down.png</file>
+        <file>../Arquivos/chevron_up.png</file>
+        <file>../Arquivos/open.png</file>
+        <file>../Arquivos/save.png</file>
+        <file>../Arquivos/grafo.png</file>
+        <file>../Arquivos/PUC.png</file>
+    </qresource>
+</RCC>

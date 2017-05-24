@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>428</width>
+    <height>459</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Numeros Naturais</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(204, 204, 204);</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QPushButton" name="pushButtonExibir">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>61</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(190, 190, 190);
+font: 11pt &quot;AR CENA&quot;;</string>
+    </property>
+    <property name="text">
+     <string>EXIBIR</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditPrimeiroNumero">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>30</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditSegundoNumero">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>30</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>10</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>AR CENA</family>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;AR CENA&quot;;</string>
+    </property>
+    <property name="text">
+     <string>1° Numero</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>10</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>AR CENA</family>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;AR CENA&quot;;</string>
+    </property>
+    <property name="text">
+     <string>2° Numero</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="tableWidgetResultados">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>391</width>
+      <height>361</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+font: 11pt &quot;AR CENA&quot;;</string>
+    </property>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>120</number>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="verticalHeaderCascadingSectionResizes">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string>Fatorial</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Número Perfeito</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Capicua</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Quadrado Perfeito</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Número Primo</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Base 10 para 16</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Base 10 para 8 </string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Base 10 para 2</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Máximo Divisor Comum</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Mínimo Múltiplo Comum</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Primos entre si</string>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>1° Numero</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>2° Numero</string>
+     </property>
+    </column>
+    <item row="0" column="0">
+     <property name="textAlignment">
+      <set>AlignCenter</set>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>94</x>
+      <y>30</y>
+      <width>61</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(190, 190, 190);
+font: 11pt &quot;AR CENA&quot;;</string>
+    </property>
+    <property name="text">
+     <string>LIMPAR</string>
+    </property>
+   </widget>
+   <zorder>tableWidgetResultados</zorder>
+   <zorder>pushButtonExibir</zorder>
+   <zorder>lineEditPrimeiroNumero</zorder>
+   <zorder>lineEditSegundoNumero</zorder>
+   <zorder>label</zorder>
+   <zorder>label_2</zorder>
+   <zorder>pushButton</zorder>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

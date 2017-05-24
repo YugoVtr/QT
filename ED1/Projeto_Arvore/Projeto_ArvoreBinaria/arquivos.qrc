@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Arquivos/abrir.png</file>
+        <file>Arquivos/fechar.png</file>
+        <file>Arquivos/limpar.png</file>
+        <file>Arquivos/PUC15.png</file>
+        <file>Arquivos/noz.png</file>
+    </qresource>
+</RCC>

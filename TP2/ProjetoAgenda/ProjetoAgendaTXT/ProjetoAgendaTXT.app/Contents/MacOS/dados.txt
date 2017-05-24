@@ -1,0 +1,4 @@
+Jose das Cove;Rua da Fera;12345;dasCove@teste.com.br
+Eugenio;Rua do Eugenio;123;eugenio@teste.com.br
+Messala;rua 20;789;messala@teste.com.br
+Maria das Cove;Rua das Cove;54321;cove@feira.com.br

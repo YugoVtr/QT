@@ -1,0 +1,127 @@
+#include "Grafo.h"
+
+
+Grafo::Grafo():
+    vertices(),
+    arestas()
+{
+}
+Grafo::Grafo(Matriz* matriz):
+    vertices(),
+    arestas()
+{
+    for(int i=0;i<matriz->getQuantidadeDeLinhas();i++)
+        this->createVertice(i,QString::number(i));
+
+    for(int i=0;i<matriz->getQuantidadeDeLinhas();i++)
+        for(int j=0;j<matriz->getQuantidadeDeColunas();j++)
+            if(matriz->getElemento(i,j)==1)
+                this->createAresta(i,i,j,true,0);
+}
+
+void Grafo::createVertice(int id , const QString &descricao){
+    Vertice novoVertice(id,descricao);
+    if(vertices.contains(novoVertice)) throw QString("Vertice já existe ");
+    vertices.push_back(novoVertice);
+}
+
+void Grafo::createAresta(int id_origem, int id_destino, int peso, bool isDirected){
+    try{
+        Vertice vOrigem(id_origem,"");
+        Vertice vDestino(id_destino,"");
+        if(vOrigem==vDestino){throw QString("Não e permitido lacos");}
+        Vertice *origem = findVertice(&vOrigem);
+        Vertice *destino = findVertice(&vDestino);
+        origem->addAdjacente(findVertice(&vDestino));
+        Aresta ida(origem,destino,peso);
+        arestas.push_back(ida);
+        if(!isDirected) {
+            destino->addAdjacente(findVertice(&vOrigem));
+            Aresta volta(destino,origem,peso);
+            arestas.push_back(volta);
+        }
+    }catch(QString &erro) {throw erro;}
+}
+
+bool Grafo::isDirected(){
+    Matriz* grafo = this->toMatrix();
+    return !grafo->eSimetrica();
+}
+int Grafo::verticeCount(){
+    return this->vertices.size();
+}
+int Grafo::arestaCount(){
+    int n = this->verticeCount();
+    int count = 0;
+
+    if(!this->isDirected()){
+        Matriz *comoMatriz = this->toMatrix();
+        for(int linha=0;linha<comoMatriz->getQuantidadeDeLinhas();linha++)
+        {
+            for(int coluna=linha+1;coluna<comoMatriz->getQuantidadeDeColunas();coluna++)
+            {
+                if(comoMatriz->getElemento(linha,coluna)) count++;
+            }
+        }
+    }
+    else{
+        for(int i=0;i<n;i++)
+        {
+            count += this->vertices[i].getAdjacentes().size();
+        }
+    }
+    return count;
+}
+
+Grafo* fromMatrix(Matriz* matriz){
+    Grafo* grafo = new Grafo(matriz);
+    return grafo;
+}
+
+
+Matriz *Grafo::toMatrix(){
+    Matriz* grafoMatriz = Matriz::zeros(this->verticeCount());
+    for(int i=0;i<this->verticeCount();i++){
+        for(int j=0;j<vertices[i].getAdjacentes().size();j++)
+        {
+            int position = vertices.indexOf(*vertices[i].getAdjacentes()[j]);
+            if(position) grafoMatriz->setElemento(1,i,position);
+        }
+    }
+    return grafoMatriz;
+}
+QString Grafo::bfs(Vertice* origem){
+
+}
+QString Grafo::print_path(){
+    int size = this->vertices.size();
+    QString saida = "";
+    for(int i=0;i < size;i++){
+        saida += vertices[i].getDescricao()+vertices[i].print_Adjacentes()+" \n";
+    }
+    return saida;
+}
+void Grafo::clear(){
+    this->vertices.clear();
+}
+
+//============ Metodos de busca ====================
+Vertice* Grafo::findVertice(Vertice* vertice){
+    for(int i=0;i<vertices.size();i++){
+        Vertice *row = &vertices[i];
+        if((*vertice)==(*row)){
+            return row;
+        }
+    }
+    return 0;
+}
+int* Grafo::findAresta(Aresta* aresta){
+    for(int i=0;i<arestas.size();i++){
+        Aresta *row = &arestas[i];
+        if((*aresta)==(*row)){
+            return row;
+        }
+    }
+    return 0;
+}
+
