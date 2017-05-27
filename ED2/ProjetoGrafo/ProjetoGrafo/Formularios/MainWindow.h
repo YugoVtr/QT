@@ -42,11 +42,11 @@ private slots:
 
     void on_actionSave_triggered();
 
-    void on_actionCadastrar_Matriz_triggered();
-
     void on_pushButton_Print_Path_clicked();
 
     void on_pushButton_PrintPath_Realizar_clicked();
+
+    void on_pushButton_CadastraMatriz_clicked();
 
 private:
     Ui::MainWindow *ui;

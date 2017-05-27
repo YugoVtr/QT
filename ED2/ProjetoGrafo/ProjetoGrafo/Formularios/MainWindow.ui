@@ -142,7 +142,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_3">
        <layout class="QGridLayout" name="gridLayout_9">
@@ -197,6 +197,9 @@ p, li { white-space: pre-wrap; }
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="1" column="0">
          <widget class="QTextEdit" name="textEdit_Saida_Matriz">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
           <property name="html">
            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -430,15 +433,6 @@ p, li { white-space: pre-wrap; }
         </layout>
        </item>
       </layout>
-      <zorder>pushButton_SeeAresta</zorder>
-      <zorder>label_ArestaOrigem</zorder>
-      <zorder>label_ArestaDestino</zorder>
-      <zorder>comboBox_VerticeOrigem</zorder>
-      <zorder>comboBox_VerticeDestino</zorder>
-      <zorder>label_ArestaPeso</zorder>
-      <zorder>spinBox_ArestaPeso</zorder>
-      <zorder>checkBox_isDirected</zorder>
-      <zorder></zorder>
      </widget>
     </item>
     <item row="3" column="0">
@@ -463,7 +457,7 @@ p, li { white-space: pre-wrap; }
        <item row="0" column="0">
         <widget class="QStackedWidget" name="stackedWidget_Opcoes">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QGridLayout" name="gridLayout_3">
@@ -529,11 +523,24 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="pushButton_CadastraMatriz">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Cadastrar Matriz</string>
+             </property>
+            </widget>
+           </item>
           </layout>
           <zorder>pushButton_PrintMatriz</zorder>
-          <zorder>groupBox_Opcoes</zorder>
           <zorder>pushButton_Print_Path</zorder>
           <zorder>pushButton_LimparVertices</zorder>
+          <zorder>pushButton_CadastraMatriz</zorder>
          </widget>
          <widget class="QWidget" name="page_2">
           <layout class="QGridLayout" name="gridLayout_5">
@@ -601,8 +608,6 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
       </layout>
-      <zorder>pushButton_IncluirAresta</zorder>
-      <zorder>stackedWidget_Opcoes</zorder>
      </widget>
     </item>
     <item row="5" column="2">
@@ -674,7 +679,6 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
-    <addaction name="actionCadastrar_Matriz"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -708,18 +712,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="actionCadastrar_Matriz">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="arquivos.qrc">
-     <normaloff>:/Arquivos/grafo.png</normaloff>:/Arquivos/grafo.png</iconset>
-   </property>
-   <property name="text">
-    <string>Cadastrar Matriz</string>
    </property>
   </action>
  </widget>

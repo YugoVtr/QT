@@ -17,10 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
         )
     );
     this->setFixedSize(this->width(),this->height());
-
-    ui->pushButton_PrintMatriz->setEnabled(false);
     ui->stackedWidget_Saida->setCurrentIndex(0);
     ui->stackedWidget_Opcoes->setCurrentIndex(0);
+    ui->stackedWidget_Opcoes->setEnabled(false);
+    ui->groupBox_Aresta->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -83,7 +83,8 @@ void MainWindow::on_pushButton_IncluirVertice_clicked()
         ui->lineEdit_IncluirVertice->clear();
         ui->textEdit_Saida->setText(print_Lista());
 
-        ui->pushButton_PrintMatriz->setEnabled(true);
+        ui->stackedWidget_Opcoes->setEnabled(true);
+        ui->groupBox_Aresta->setEnabled(true);
     } catch(std::string &erro) { QMessageBox::information(this,"ERRO",QString::fromStdString(erro)); }
 }
 
@@ -92,11 +93,16 @@ void MainWindow::on_pushButton_LimparVertices_clicked()
     delete graph;
     graph = new Grafo();
 
-    ui->textEdit_Saida->setText(print_Lista());
+    ui->textEdit_Saida->clear();
+    ui->textEdit_Saida_Matriz->clear();
+    ui->textEdit_Print_Path->clear();
     ui->comboBox_VerticeOrigem->clear();
     ui->comboBox_VerticeDestino->clear();
-    ui->pushButton_PrintMatriz->setEnabled(false);
-    ui->textEdit_Print_Path->clear();
+
+    ui->stackedWidget_Opcoes->setEnabled(false);
+    ui->groupBox_Aresta->setEnabled(false);
+    ui->stackedWidget_Saida->setCurrentIndex(0);
+    ui->stackedWidget_Opcoes->setCurrentIndex(0);
 }
 
 void MainWindow::on_pushButton_IncluirAresta_clicked()
@@ -133,13 +139,12 @@ void MainWindow::on_actionOpen_triggered()
 {
     try
     {
+        this->on_pushButton_LimparVertices_clicked();
         QString nome_Do_Arquivo_No_Disco = QFileDialog::getOpenFileName(this,"Abrir Arquivo","../ProjetoGrafo/Arquivos","Arquivos Textos (*.csv *.txt)");
         PersistenciaGrafo open(nome_Do_Arquivo_No_Disco);
-        delete graph;
+        if(graph) delete graph;
         this->graph = open.carregar();
         std::stack<std::string>* all_Vertices =  graph->vertice();
-        ui->comboBox_VerticeOrigem->clear();
-        ui->comboBox_VerticeDestino->clear();
         while(!all_Vertices->empty())
         {
             ui->comboBox_VerticeOrigem->addItem(QString::fromStdString(all_Vertices->top()));
@@ -148,7 +153,9 @@ void MainWindow::on_actionOpen_triggered()
         }
         ui->textEdit_Saida->setText(print_Lista());
         if(all_Vertices) delete all_Vertices;
-        ui->pushButton_PrintMatriz->setEnabled(true);
+
+        ui->stackedWidget_Opcoes->setEnabled(true);
+        ui->groupBox_Aresta->setEnabled(true);
     }catch(QString &erro){QMessageBox::information(this,"ERRO",erro);}
     catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
 }
@@ -164,45 +171,6 @@ void MainWindow::on_actionSave_triggered()
         QMessageBox::information(this,"Sucesso","Salvo com sucesso");
     }catch(QString &erro){QMessageBox::information(this,"ERRO",erro);}
     catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
-}
-
-void MainWindow::on_actionCadastrar_Matriz_triggered()
-{
-    try
-    {
-        int linha = QInputDialog::getInt(this , "Quantidade de Vetices","Informe a quantidade de vertices: ",0,1);
-        if(linha){
-            int coluna = linha;
-            Matriz matriz(linha,coluna);
-            for(int contador_linha=0; contador_linha < linha ; contador_linha++)
-            {
-                for(int contador_coluna= 0; contador_coluna < coluna; contador_coluna++)
-                {
-                    if(contador_linha!=contador_coluna)
-                    {
-                        int elemento =  QInputDialog::getInt(this , "Leitura","Matriz Adjacencia [ "+
-                                                             QString::number(contador_linha) +
-                                                             ", "+ QString::number(contador_coluna) + "] = ",0,0,1);
-                        matriz.setElemento(elemento,contador_linha,contador_coluna);
-                    }
-                }
-            }
-            if(graph) delete graph;
-            this->graph = new Grafo(&matriz);
-            ui->comboBox_VerticeOrigem->clear();
-            ui->comboBox_VerticeDestino->clear();
-            std::stack<std::string>* all_Vertices =  graph->vertice();
-            while(!all_Vertices->empty())
-            {
-                ui->comboBox_VerticeOrigem->addItem(QString::fromStdString(all_Vertices->top()));
-                ui->comboBox_VerticeDestino->addItem(QString::fromStdString(all_Vertices->top()));
-                all_Vertices->pop();
-            }
-            ui->textEdit_Saida->setText(print_Lista());
-            if(all_Vertices) delete all_Vertices;
-            ui->pushButton_PrintMatriz->setEnabled(true);
-        }
-    }catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
 }
 
 void MainWindow::on_pushButton_Print_Path_clicked()
@@ -230,5 +198,42 @@ void MainWindow::on_pushButton_PrintPath_Realizar_clicked()
         ui->comboBox_PrintPath_Origem->clear();
         ui->comboBox_PrintPath_Destino->clear();
         ui->stackedWidget_Opcoes->setCurrentIndex(0);
+    }catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
+}
+
+void MainWindow::on_pushButton_CadastraMatriz_clicked()
+{
+    try
+    {
+        this->on_pushButton_LimparVertices_clicked();
+        int linha = QInputDialog::getInt(this , "Quantidade de Vetices","Informe a quantidade de vertices: ",0,1);
+        if(linha){
+            int coluna = linha;
+            Matriz matriz(linha,coluna);
+            for(int contador_linha=0; contador_linha < linha ; contador_linha++)
+            {
+                for(int contador_coluna= 0; contador_coluna < coluna; contador_coluna++)
+                {
+                    if(contador_linha!=contador_coluna)
+                    {
+                        int elemento =  QInputDialog::getInt(this , "Leitura","Matriz Adjacencia [ "+
+                                                             QString::number(contador_linha) +
+                                                             ", "+ QString::number(contador_coluna) + "] = ",0,0,1);
+                        matriz.setElemento(elemento,contador_linha,contador_coluna);
+                    }
+                }
+            }
+            if(graph) delete graph;
+            this->graph = new Grafo(&matriz);
+            std::stack<std::string>* all_Vertices =  graph->vertice();
+            while(!all_Vertices->empty())
+            {
+                ui->comboBox_VerticeOrigem->addItem(QString::fromStdString(all_Vertices->top()));
+                ui->comboBox_VerticeDestino->addItem(QString::fromStdString(all_Vertices->top()));
+                all_Vertices->pop();
+            }
+            ui->textEdit_Saida->setText(print_Lista());
+            if(all_Vertices) delete all_Vertices;
+        }
     }catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
 }
