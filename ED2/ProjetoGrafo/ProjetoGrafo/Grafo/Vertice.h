@@ -37,6 +37,7 @@ public:
     inline Cores getCor()const{return cor;}
     inline Vertice* getPredecessor()const{return predecessor;}
     inline int getDistancia()const {return distancia;}
+    bool operator ==(const Vertice &value)const{return this->descricao==value.descricao;}
 };
 
 #endif // VERTICE_H

@@ -4,8 +4,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    graph(new Grafo()),
-    flagUrlAresta(true)
+    graph(new Grafo())
 {
     ui->setupUi(this);
 
@@ -19,61 +18,58 @@ MainWindow::MainWindow(QWidget *parent) :
     );
     this->setFixedSize(this->width(),this->height());
 
-    QRegExp peso("[0-9]*");
-    QRegExpValidator *Peso = new QRegExpValidator(peso,ui->lineEdit_ArestaPeso);
-    ui->lineEdit_ArestaPeso->setValidator(Peso);
     ui->pushButton_PrintMatriz->setEnabled(false);
-    ui->pushButton_SeeAresta->setEnabled(false);
-    this->exibirMenuAresta(false);
+    ui->stackedWidget_Saida->setCurrentIndex(0);
+    ui->stackedWidget_Opcoes->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
 {
     delete graph;
-    delete ui->lineEdit_ArestaPeso->validator();
     delete ui;
 }
 
-void MainWindow::exibirMenuAresta(bool flag) const
-{
-    if(flag){
-        ui->label_ArestaOrigem->show();
-        ui->comboBox_VerticeOrigem->show();
-        ui->label_ArestaDestino->show();
-        ui->comboBox_VerticeDestino->show();
-        ui->label_ArestaPeso->show();
-        ui->lineEdit_ArestaPeso->show();
-        ui->checkBox_isDirected->show();
-        ui->pushButton_IncluirAresta->show();
-    }
-    else{
-        ui->label_ArestaOrigem->hide();
-        ui->comboBox_VerticeOrigem->hide();
-        ui->label_ArestaDestino->hide();
-        ui->comboBox_VerticeDestino->hide();
-        ui->label_ArestaPeso->hide();
-        ui->lineEdit_ArestaPeso->hide();
-        ui->checkBox_isDirected->hide();
-        ui->pushButton_IncluirAresta->hide();
-    }
-}
-
-QString MainWindow::print(){
+QString MainWindow::print_Lista(){
+    QString saida("");
     int size = graph->verticeCount();
-    QString saida = "GRAFO - LISTA DE ADJACENCIA\n\n";
     for(int i=0;i < size;i++){
         QString vertice = ui->comboBox_VerticeOrigem->itemText(i);
         saida += vertice+":   ";
 
-        std::queue<std::string>* adjacentes = graph->aresta(vertice.toStdString());
+        std::stack<std::string>* adjacentes = graph->aresta(vertice.toStdString());
         while(!adjacentes->empty()){
-            saida += QString::fromStdString(adjacentes->front());
+            saida += QString::fromStdString(adjacentes->top());
             adjacentes->pop();
             saida += "   ";
         }
         delete adjacentes;
         saida +="\n";
     }
+    return saida;
+}
+
+QString MainWindow::print_Matriz(){
+    Matriz* grafo = graph->toMatrix();
+    QString saida("     ");
+    std::stack<std::string>* values = graph->vertice();
+    std::queue<std::string> values_Cell;
+
+    while(!values->empty()){
+        saida += QString::fromStdString(values->top()) + "   ";
+        values_Cell.push(values->top());
+        values->pop();
+    }
+    saida+= "\n";
+    delete values;
+
+    for(int i=0;i<grafo->getQuantidadeDeLinhas();i++){
+        saida += QString::fromStdString(values_Cell.front()) + "   ";
+        for(int j=0;j<grafo->getQuantidadeDeColunas();j++)
+            saida += QString::number(grafo->getElemento(i,j)) + "   ";
+        saida+= "\n";
+        values_Cell.pop();
+    }
+    delete grafo;
     return saida;
 }
 
@@ -85,10 +81,9 @@ void MainWindow::on_pushButton_IncluirVertice_clicked()
         ui->comboBox_VerticeOrigem->addItem(ui->lineEdit_IncluirVertice->text());
         ui->comboBox_VerticeDestino->addItem(ui->lineEdit_IncluirVertice->text());
         ui->lineEdit_IncluirVertice->clear();
-        ui->textEdit_Saida->setText(print());
+        ui->textEdit_Saida->setText(print_Lista());
 
         ui->pushButton_PrintMatriz->setEnabled(true);
-        ui->pushButton_SeeAresta->setEnabled(true);
     } catch(std::string &erro) { QMessageBox::information(this,"ERRO",QString::fromStdString(erro)); }
 }
 
@@ -97,12 +92,11 @@ void MainWindow::on_pushButton_LimparVertices_clicked()
     delete graph;
     graph = new Grafo();
 
-    ui->textEdit_Saida->setText(print());
+    ui->textEdit_Saida->setText(print_Lista());
     ui->comboBox_VerticeOrigem->clear();
     ui->comboBox_VerticeDestino->clear();
     ui->pushButton_PrintMatriz->setEnabled(false);
-    ui->pushButton_SeeAresta->setEnabled(false);
-    if(!this->flagUrlAresta) this->on_pushButton_SeeAresta_clicked();
+    ui->textEdit_Print_Path->clear();
 }
 
 void MainWindow::on_pushButton_IncluirAresta_clicked()
@@ -111,9 +105,9 @@ void MainWindow::on_pushButton_IncluirAresta_clicked()
     {
         graph->createAresta(ui->comboBox_VerticeOrigem->currentText().toStdString(),
                            ui->comboBox_VerticeDestino->currentText().toStdString(),
-                           ui->lineEdit_ArestaPeso->text().toInt(),
+                           ui->spinBox_ArestaPeso->text().toInt(),
                            ui->checkBox_isDirected->isChecked());
-        ui->textEdit_Saida->setText(print());
+        ui->textEdit_Saida->setText(print_Lista());
     }catch(std::string &erro) { QMessageBox::information(this,"ERRO",QString::fromStdString(erro)); }
 }
 
@@ -121,41 +115,19 @@ void MainWindow::on_pushButton_PrintMatriz_clicked()
 {
     try
     {
-        Matriz* grafo = graph->toMatrix();
-        QString saida(" \t");
-        std::queue<std::string>* values = graph->vertice();
-        for(int i=0;i<(int)values->size();i++){
-            saida += QString::fromStdString(values->front()) + "\t";
-            values->push(values->front());
-            values->pop();
+        if(ui->stackedWidget_Saida->currentIndex()==0)
+        {
+            ui->textEdit_Saida_Matriz->setText(print_Matriz());
+            ui->pushButton_PrintMatriz->setText("ver Lista");
+            ui->stackedWidget_Saida->setCurrentIndex(1);
         }
-        saida+= "\n";
-
-        for(int i=0;i<grafo->getQuantidadeDeLinhas();i++){
-            saida += QString::fromStdString(values->front()) + "\t";
-            for(int j=0;j<grafo->getQuantidadeDeColunas();j++)
-                saida += QString::number(grafo->getElemento(i,j)) + "\t";
-            saida+= "\n";
-            values->pop();
+        else
+        {
+            ui->stackedWidget_Saida->setCurrentIndex(0);
+            ui->pushButton_PrintMatriz->setText("ver Matriz");
         }
-        QMessageBox::about(this,"GRAFO",saida);
-        delete grafo;
-        delete values;
     }catch(std::string &erro) { QMessageBox::information(this,"ERRO",QString::fromStdString(erro)); }
 }
-
-void MainWindow::on_pushButton_SeeAresta_clicked()
-{
-    QString newUrl("../ProjetoGrafo/Arquivos/chevron_down.png");
-    if(flagUrlAresta) {
-        newUrl = "../ProjetoGrafo/Arquivos/chevron_up.png";
-    }
-    this->exibirMenuAresta(flagUrlAresta);
-    QIcon chevron(newUrl);
-    ui->pushButton_SeeAresta->setIcon(chevron);
-    flagUrlAresta = !flagUrlAresta;
-}
-
 
 void MainWindow::on_actionOpen_triggered()
 {
@@ -165,17 +137,16 @@ void MainWindow::on_actionOpen_triggered()
         PersistenciaGrafo open(nome_Do_Arquivo_No_Disco);
         delete graph;
         this->graph = open.carregar();
-        std::queue<std::string>* all_Vertices =  graph->vertice();
-        while(!all_Vertices->empty())
-        {
-            ui->comboBox_VerticeOrigem->addItem(QString::fromStdString(all_Vertices->front()));
-            ui->comboBox_VerticeDestino->addItem(QString::fromStdString(all_Vertices->front()));
-            all_Vertices->pop();
-        }
-        ui->textEdit_Saida->setText(print());
-        if(this->flagUrlAresta) this->on_pushButton_SeeAresta_clicked();
+        std::stack<std::string>* all_Vertices =  graph->vertice();
         ui->comboBox_VerticeOrigem->clear();
         ui->comboBox_VerticeDestino->clear();
+        while(!all_Vertices->empty())
+        {
+            ui->comboBox_VerticeOrigem->addItem(QString::fromStdString(all_Vertices->top()));
+            ui->comboBox_VerticeDestino->addItem(QString::fromStdString(all_Vertices->top()));
+            all_Vertices->pop();
+        }
+        ui->textEdit_Saida->setText(print_Lista());
         if(all_Vertices) delete all_Vertices;
         ui->pushButton_PrintMatriz->setEnabled(true);
     }catch(QString &erro){QMessageBox::information(this,"ERRO",erro);}
@@ -218,15 +189,16 @@ void MainWindow::on_actionCadastrar_Matriz_triggered()
             }
             if(graph) delete graph;
             this->graph = new Grafo(&matriz);
-            ui->textEdit_Saida->setText(print());
-            if(this->flagUrlAresta) this->on_pushButton_SeeAresta_clicked();
-            std::queue<std::string>* all_Vertices =  graph->vertice();
+            ui->comboBox_VerticeOrigem->clear();
+            ui->comboBox_VerticeDestino->clear();
+            std::stack<std::string>* all_Vertices =  graph->vertice();
             while(!all_Vertices->empty())
             {
-                ui->comboBox_VerticeOrigem->addItem(QString::fromStdString(all_Vertices->front()));
-                ui->comboBox_VerticeDestino->addItem(QString::fromStdString(all_Vertices->front()));
+                ui->comboBox_VerticeOrigem->addItem(QString::fromStdString(all_Vertices->top()));
+                ui->comboBox_VerticeDestino->addItem(QString::fromStdString(all_Vertices->top()));
                 all_Vertices->pop();
             }
+            ui->textEdit_Saida->setText(print_Lista());
             if(all_Vertices) delete all_Vertices;
             ui->pushButton_PrintMatriz->setEnabled(true);
         }
@@ -236,9 +208,27 @@ void MainWindow::on_actionCadastrar_Matriz_triggered()
 void MainWindow::on_pushButton_Print_Path_clicked()
 {
     try{
-        graph->bfs(ui->comboBox_VerticeOrigem->currentText().toStdString());
-        QString print = QString::fromStdString(graph->print_path(ui->comboBox_VerticeOrigem->currentText().toStdString()
-                                                                 ,ui->comboBox_VerticeDestino->currentText().toStdString()));
+        std::stack<std::string> *vertices = graph->vertice();
+        while(!vertices->empty())
+        {
+            ui->comboBox_PrintPath_Origem->addItem(QString::fromStdString(vertices->top()));
+            ui->comboBox_PrintPath_Destino->addItem(QString::fromStdString(vertices->top()));
+            vertices->pop();
+        }
+        delete vertices;
+        ui->stackedWidget_Opcoes->setCurrentIndex(1);
+    }catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
+}
+
+void MainWindow::on_pushButton_PrintPath_Realizar_clicked()
+{
+    try{
+        graph->bfs(ui->comboBox_PrintPath_Origem->currentText().toStdString());
+        QString print = QString::fromStdString(graph->print_path(ui->comboBox_PrintPath_Origem->currentText().toStdString()
+                                                                 ,ui->comboBox_PrintPath_Destino->currentText().toStdString()));
         ui->textEdit_Print_Path->setText(print);
+        ui->comboBox_PrintPath_Origem->clear();
+        ui->comboBox_PrintPath_Destino->clear();
+        ui->stackedWidget_Opcoes->setCurrentIndex(0);
     }catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
 }

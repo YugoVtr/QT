@@ -24,8 +24,8 @@ public:
     ~MainWindow();
 
     //Metodos de exibição
-    void exibirMenuAresta(bool flag)const;
-    QString print();
+    QString print_Lista();
+    QString print_Matriz();
 
 private slots:
     void on_pushButton_IncluirVertice_clicked();
@@ -35,8 +35,6 @@ private slots:
     void on_pushButton_IncluirAresta_clicked();
 
     void on_pushButton_PrintMatriz_clicked();
-
-    void on_pushButton_SeeAresta_clicked();
 
     void on_lineEdit_IncluirVertice_returnPressed(){this->on_pushButton_IncluirVertice_clicked();}
 
@@ -48,10 +46,11 @@ private slots:
 
     void on_pushButton_Print_Path_clicked();
 
+    void on_pushButton_PrintPath_Realizar_clicked();
+
 private:
     Ui::MainWindow *ui;
     Grafo *graph;
-    bool flagUrlAresta;
 };
 
 #endif // MAINWINDOW_H

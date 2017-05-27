@@ -18,6 +18,7 @@ private:
     void bfs(Vertice *origem);
     std::string print_path(Vertice origem,Vertice destino);
     std::string intToString(int i)const;
+    std::string montarDescricaoAresta(const std::string &origem, const std::string &destino)const;
 
 public:
     Grafo();
@@ -34,8 +35,10 @@ public:
     std::string print_path(std::string origem, std::string destino);
     void clear();
     bool isEmpty()const{return vertices.empty();}
-    std::queue<std::string> *vertice();
-    std::queue<std::string> *aresta(const std::string &origem);
+    std::stack<std::string> *vertice();
+    std::stack<std::string> *aresta(const std::string &origem);
+    bool find_Vertice(const std::string &descricao)const;
+    bool find_Aresta (const std::string &origem, const std::string &destino)const;
 };
 
 #endif // GRAFO_H

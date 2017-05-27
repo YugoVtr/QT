@@ -26,17 +26,34 @@ Grafo::Grafo(Matriz* matriz):
 Grafo::~Grafo()
 {
     for( const auto& vertice : vertices ) {
-        delete vertice.second;
+        if(vertice.second) delete vertice.second;
     }
     for( const auto& aresta : arestas ) {
-        delete aresta.second;
+         if(aresta.second) delete aresta.second;
     }
 }
 
+std::string Grafo::montarDescricaoAresta(const std::string &origem, const std::string &destino) const
+{
+    return std::string(origem) + "=>" + destino;
+}
+
+bool Grafo::find_Vertice(const std::string &descricao) const
+{
+    return vertices.find(descricao) != vertices.end();
+}
+
+bool Grafo::find_Aresta(const std::string &origem, const std::string &destino) const
+{
+    std::string descricao = montarDescricaoAresta(origem,destino);
+    return arestas.find(descricao) != arestas.end();
+}
+
 void Grafo::createVertice(const std::string &descricao){
-    try{
+    if(find_Vertice(descricao))throw std::string("Vertice já existe");
+    try
+    {
         Vertice *novoVertice = new Vertice(descricao);
-        if(vertices.find(descricao) != vertices.end())throw std::string("Vertice já existe");
         vertices.insert({descricao,novoVertice});
     }catch(std::string &erro) { throw std::string(erro); }
      catch(std::bad_alloc) {throw std::string("Erro de alocação"); }
@@ -44,11 +61,11 @@ void Grafo::createVertice(const std::string &descricao){
 
 void Grafo::createAresta(std::string origem, std::string destino, int peso, bool isDirected)
 {
+    if(find_Aresta(origem,destino))throw std::string("Aresta já existe");
     try{
-        std::string key = std::string(origem) + "=>" + destino;
-        if(arestas.find(key) != arestas.end())throw std::string("Aresta já existe");
-        if(vertices.find(origem) == vertices.end() || vertices.find(destino) == vertices.end())
-            {throw std::string("Vertice não encontrado");}
+        std::string key = this->montarDescricaoAresta(origem,destino);
+        if(!find_Vertice(origem) || !find_Vertice(destino))
+            {throw std::string("Erro ao Criar Aresta");}
 
         Vertice *vertice_Origem = vertices[origem];
         Vertice *vertice_Destino = vertices[destino];
@@ -59,8 +76,7 @@ void Grafo::createAresta(std::string origem, std::string destino, int peso, bool
         if(!isDirected) {
             vertice_Destino->addAdjacente(vertice_Origem);
             Aresta *volta = new Aresta(vertice_Destino,vertice_Origem,peso);
-            key = std::string(destino) + "=>" + origem;
-            arestas.insert({key,volta});
+            arestas.insert({montarDescricaoAresta(destino,origem),volta});
         }
     }catch(std::string &erro) {throw erro;}
 }
@@ -124,30 +140,30 @@ void Grafo::bfs(std::string origem)
 
 void Grafo::bfs(Vertice* origem)
 {
-//    this->clear();
-//    origem->setCor(cinza);
-//    origem->setDistancia(0);
-//    origem->setPredecessor(0);
-//    std::queue<Vertice*> Q;
-//    Q.push(origem);
-//    while(!Q.empty())
-//    {
-//        Vertice* u = Q.front();
-//        Q.pop();
-//        int size = u->getAdjacentes().size();
-//        for(int i=0; i < size ;i++)
-//        {
-//            Vertice *v = u->getAdjacentes()[i];
-//            if(v->getCor()==branco)
-//            {
-//                v->setCor(cinza);
-//                v->setDistancia(u->getDistancia()+1);
-//                v->setPredecessor(u);
-//                Q.push(v);
-//            }
-//        }
-//        u->setCor(preto);
-//    }
+    this->clear();
+    origem->setCor(cinza);
+    origem->setDistancia(0);
+    origem->setPredecessor(0);
+
+    std::queue<Vertice*> Q;
+    Q.push(origem);
+    while(!Q.empty())
+    {
+        Vertice* u = Q.front();
+        Q.pop();
+        for( const auto& i : u->getAdjacentes() )
+        {
+            Vertice *v = i.second;
+            if(v->getCor()==branco)
+            {
+                v->setCor(cinza);
+                v->setDistancia(u->getDistancia()+1);
+                v->setPredecessor(u);
+                Q.push(v);
+            }
+        }
+        u->setCor(preto);
+    }
 }
 std::string Grafo::print_path(std::string origem, std::string destino)
 {
@@ -160,20 +176,20 @@ std::string Grafo::print_path(std::string origem, std::string destino)
 
 std::string Grafo::print_path(Vertice origem,Vertice destino)
 {
-//    try{
-//        if(origem==destino) return origem.getDescricao();
-//        else{
-//            if(!destino.getPredecessor()){
-//               throw std::string("Nenhum caminho de "+origem.getDescricao()+" para "+destino.getDescricao());
-//            }
-//            else{
-//                std::string caminho(this->print_path(origem,(*destino.getPredecessor())));
-//                caminho = caminho + " => "+ destino.getDescricao();
-//                return caminho;
-//            }
-//        }
-//    }catch(std::string &erro){throw std::string(erro);}
-    //    return "";
+    try{
+        if(origem==destino) return origem.getDescricao();
+        else{
+            if(!destino.getPredecessor()){
+               throw std::string("Nenhum caminho de "+origem.getDescricao()+" para "+destino.getDescricao());
+            }
+            else{
+                std::string caminho(this->print_path(origem,(*destino.getPredecessor())));
+                caminho = caminho + " => "+ destino.getDescricao();
+                return caminho;
+            }
+        }
+    }catch(std::string &erro){throw std::string(erro);}
+        return "";
 }
 
 std::string Grafo::intToString(int i) const
@@ -191,24 +207,24 @@ void Grafo::clear()
     }
 }
 
-std::queue<std::string> *Grafo::vertice()
+std::stack<std::string> *Grafo::vertice()
 {
-    std::queue<std::string> *all_Vertices = new std::queue<std::string>();
+    std::stack<std::string> *all_Vertices = new std::stack<std::string>();
     for( const auto& vertice : vertices ) {
         all_Vertices->push(vertice.first);
     }
     return all_Vertices;
 }
 
-std::queue<std::string>* Grafo::aresta(const std::string &origem)
+std::stack<std::string>* Grafo::aresta(const std::string &origem)
 {
     if(vertices.find(origem) == vertices.end())
         {throw std::string("Vertice não encontrado");}
 
     std::unordered_map<std::string,Vertice*> adjacentes = vertices[origem]->getAdjacentes();
-    std::queue<std::string> *all_Arestas = new std::queue<std::string>();
+    std::stack<std::string> *all_Arestas = new std::stack<std::string>();
     for( const auto& vertice : adjacentes ) {
-        std::string key = origem + "=>" + vertice.first;
+        std::string key = this->montarDescricaoAresta(origem,vertice.first);
         if(arestas.find(key) == arestas.end())
             {throw std::string("Aresta não encontrada");}
 
@@ -216,6 +232,5 @@ std::queue<std::string>* Grafo::aresta(const std::string &origem)
         std::string adjacente(std::string("=>") + std::to_string(resultado->getPeso()) + "|" + vertice.first);
         all_Arestas->push(adjacente);
     }
-
     return all_Arestas;
 }
