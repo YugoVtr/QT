@@ -11,6 +11,11 @@
 #include "Matriz/Matriz.h"
 #include "Persistencia/PersistenciaGrafo.h"
 
+//Variaveis Globais
+static const QString URLBLOQUEADO("../ProjetoGrafo/Arquivos/bloqueado.png");
+static const QString URLDESBLOQUEADO("../ProjetoGrafo/Arquivos/desbloqueado.png");
+static const QString MENSAGEM("\n Para mais informações consulte o botão de 'AJUDA'");
+
 namespace Ui {
 class MainWindow;
 }
@@ -47,6 +52,8 @@ private slots:
     void on_pushButton_PrintPath_Realizar_clicked();
 
     void on_pushButton_CadastraMatriz_clicked();
+
+    void on_pushButton_Information_clicked();
 
 private:
     Ui::MainWindow *ui;

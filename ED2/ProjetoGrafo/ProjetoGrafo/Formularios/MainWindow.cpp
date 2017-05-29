@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //Centraliza a MainWindow na Tela
     this->setGeometry(
         QStyle::alignedRect(
             Qt::LeftToRight,
@@ -16,7 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
             qApp->desktop()->availableGeometry()
         )
     );
-    this->setFixedSize(this->width(),this->height());
+
+    //Definição do Estado inicial da MainWindow
+    this->setFixedSize(802,568);
     ui->stackedWidget_Saida->setCurrentIndex(0);
     ui->stackedWidget_Opcoes->setCurrentIndex(0);
     ui->stackedWidget_Opcoes->setEnabled(false);
@@ -30,79 +33,106 @@ MainWindow::~MainWindow()
 }
 
 QString MainWindow::print_Lista(){
-    QString saida("");
-    int size = graph->verticeCount();
-    for(int i=0;i < size;i++){
-        QString vertice = ui->comboBox_VerticeOrigem->itemText(i);
-        saida += vertice+":   ";
+    try{
+        QString saida("");
+        int size = graph->verticeCount();
+        for(int i=0;i < size;i++){
+            QString vertice = ui->comboBox_VerticeOrigem->itemText(i);
+            saida += vertice+":   ";
 
-        std::stack<std::string>* adjacentes = graph->aresta(vertice.toStdString());
-        while(!adjacentes->empty()){
-            saida += QString::fromStdString(adjacentes->top());
-            adjacentes->pop();
-            saida += "   ";
+            std::stack<std::string>* adjacentes = graph->aresta(vertice.toStdString());
+            while(!adjacentes->empty()){
+                saida += QString::fromStdString(adjacentes->top());
+                adjacentes->pop();
+                saida += "   ";
+            }
+            delete adjacentes;
+            saida +="\n";
         }
-        delete adjacentes;
-        saida +="\n";
+        return saida;
+    }catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
     }
-    return saida;
+    return "";
 }
 
 QString MainWindow::print_Matriz(){
-    Matriz* grafo = graph->toMatrix();
-    QString saida("     ");
-    std::stack<std::string>* values = graph->vertice();
-    std::queue<std::string> values_Cell;
+    try{
+        Matriz* grafo = graph->toMatrix();
+        QString saida("     ");
+        std::stack<std::string>* values = graph->vertice();
+        std::queue<std::string> values_Cell;
 
-    while(!values->empty()){
-        saida += QString::fromStdString(values->top()) + "   ";
-        values_Cell.push(values->top());
-        values->pop();
-    }
-    saida+= "\n";
-    delete values;
-
-    for(int i=0;i<grafo->getQuantidadeDeLinhas();i++){
-        saida += QString::fromStdString(values_Cell.front()) + "   ";
-        for(int j=0;j<grafo->getQuantidadeDeColunas();j++)
-            saida += QString::number(grafo->getElemento(i,j)) + "   ";
+        while(!values->empty()){
+            saida += QString::fromStdString(values->top()) + "   ";
+            values_Cell.push(values->top());
+            values->pop();
+        }
         saida+= "\n";
-        values_Cell.pop();
+        delete values;
+
+        for(int i=0;i<grafo->getQuantidadeDeLinhas();i++){
+            saida += QString::fromStdString(values_Cell.front()) + "   ";
+            for(int j=0;j<grafo->getQuantidadeDeColunas();j++)
+                saida += QString::number(grafo->getElemento(i,j)) + "   ";
+            saida+= "\n";
+            values_Cell.pop();
+        }
+        delete grafo;
+        return saida;
+    }catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
     }
-    delete grafo;
-    return saida;
+    return "";
 }
 
 void MainWindow::on_pushButton_IncluirVertice_clicked()
 {
     try {
-        if(ui->lineEdit_IncluirVertice->text().isEmpty()) throw std::string("Descrição invalida");
-        graph->createVertice(ui->lineEdit_IncluirVertice->text().toStdString());
-        ui->comboBox_VerticeOrigem->addItem(ui->lineEdit_IncluirVertice->text());
-        ui->comboBox_VerticeDestino->addItem(ui->lineEdit_IncluirVertice->text());
+        if(ui->lineEdit_IncluirVertice->text().simplified().isEmpty()) throw std::string("Descrição invalida");
+        graph->createVertice(ui->lineEdit_IncluirVertice->text().simplified().toStdString());
+        ui->comboBox_VerticeOrigem->addItem(ui->lineEdit_IncluirVertice->text().simplified());
+        ui->comboBox_VerticeDestino->addItem(ui->lineEdit_IncluirVertice->text().simplified());
         ui->lineEdit_IncluirVertice->clear();
         ui->textEdit_Saida->setText(print_Lista());
 
         ui->stackedWidget_Opcoes->setEnabled(true);
         ui->groupBox_Aresta->setEnabled(true);
-    } catch(std::string &erro) { QMessageBox::information(this,"ERRO",QString::fromStdString(erro)); }
+
+        ui->label_Status->setPixmap(QPixmap(URLDESBLOQUEADO));
+    }catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
 }
 
 void MainWindow::on_pushButton_LimparVertices_clicked()
 {
-    delete graph;
-    graph = new Grafo();
+    try{
+        delete graph;
+        graph = new Grafo();
 
-    ui->textEdit_Saida->clear();
-    ui->textEdit_Saida_Matriz->clear();
-    ui->textEdit_Print_Path->clear();
-    ui->comboBox_VerticeOrigem->clear();
-    ui->comboBox_VerticeDestino->clear();
+        ui->textEdit_Saida->clear();
+        ui->textEdit_Saida_Matriz->clear();
+        ui->textEdit_Print_Path->clear();
+        ui->comboBox_VerticeOrigem->clear();
+        ui->comboBox_VerticeDestino->clear();
 
-    ui->stackedWidget_Opcoes->setEnabled(false);
-    ui->groupBox_Aresta->setEnabled(false);
-    ui->stackedWidget_Saida->setCurrentIndex(0);
-    ui->stackedWidget_Opcoes->setCurrentIndex(0);
+        ui->stackedWidget_Opcoes->setEnabled(false);
+        ui->groupBox_Aresta->setEnabled(false);
+        ui->stackedWidget_Saida->setCurrentIndex(0);
+        ui->stackedWidget_Opcoes->setCurrentIndex(0);
+        ui->label_Status->setPixmap(QPixmap(URLBLOQUEADO));
+    }catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
 }
 
 void MainWindow::on_pushButton_IncluirAresta_clicked()
@@ -114,7 +144,11 @@ void MainWindow::on_pushButton_IncluirAresta_clicked()
                            ui->spinBox_ArestaPeso->text().toInt(),
                            ui->checkBox_isDirected->isChecked());
         ui->textEdit_Saida->setText(print_Lista());
-    }catch(std::string &erro) { QMessageBox::information(this,"ERRO",QString::fromStdString(erro)); }
+    }catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
 }
 
 void MainWindow::on_pushButton_PrintMatriz_clicked()
@@ -132,7 +166,11 @@ void MainWindow::on_pushButton_PrintMatriz_clicked()
             ui->stackedWidget_Saida->setCurrentIndex(0);
             ui->pushButton_PrintMatriz->setText("ver Matriz");
         }
-    }catch(std::string &erro) { QMessageBox::information(this,"ERRO",QString::fromStdString(erro)); }
+    }catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -157,7 +195,11 @@ void MainWindow::on_actionOpen_triggered()
         ui->stackedWidget_Opcoes->setEnabled(true);
         ui->groupBox_Aresta->setEnabled(true);
     }catch(QString &erro){QMessageBox::information(this,"ERRO",erro);}
-    catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
+    catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
 }
 
 void MainWindow::on_actionSave_triggered()
@@ -170,7 +212,11 @@ void MainWindow::on_actionSave_triggered()
         salvar.salvar(graph);
         QMessageBox::information(this,"Sucesso","Salvo com sucesso");
     }catch(QString &erro){QMessageBox::information(this,"ERRO",erro);}
-    catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
+    catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
 }
 
 void MainWindow::on_pushButton_Print_Path_clicked()
@@ -185,7 +231,11 @@ void MainWindow::on_pushButton_Print_Path_clicked()
         }
         delete vertices;
         ui->stackedWidget_Opcoes->setCurrentIndex(1);
-    }catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
+    }catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
 }
 
 void MainWindow::on_pushButton_PrintPath_Realizar_clicked()
@@ -198,16 +248,21 @@ void MainWindow::on_pushButton_PrintPath_Realizar_clicked()
         ui->comboBox_PrintPath_Origem->clear();
         ui->comboBox_PrintPath_Destino->clear();
         ui->stackedWidget_Opcoes->setCurrentIndex(0);
-    }catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
+    }catch(std::string &erro){
+        ui->stackedWidget_Opcoes->setCurrentIndex(0);
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
 }
 
 void MainWindow::on_pushButton_CadastraMatriz_clicked()
 {
     try
     {
-        this->on_pushButton_LimparVertices_clicked();
         int linha = QInputDialog::getInt(this , "Quantidade de Vetices","Informe a quantidade de vertices: ",0,1);
         if(linha){
+            this->on_pushButton_LimparVertices_clicked();
             int coluna = linha;
             Matriz matriz(linha,coluna);
             for(int contador_linha=0; contador_linha < linha ; contador_linha++)
@@ -235,5 +290,21 @@ void MainWindow::on_pushButton_CadastraMatriz_clicked()
             ui->textEdit_Saida->setText(print_Lista());
             if(all_Vertices) delete all_Vertices;
         }
-    }catch(std::string &erro){QMessageBox::information(this,"ERRO",QString::fromStdString(erro));}
+    }catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
+}
+
+void MainWindow::on_pushButton_Information_clicked()
+{
+    try
+    {
+        QMessageBox::information(this,"HELP","Documentação não implementada");
+    }catch(std::string &erro){
+        QString help("--> ERRO = "+QString::fromStdString(erro));
+        help += MENSAGEM;
+        QMessageBox::information(this,"ERRO",help);
+    }
 }

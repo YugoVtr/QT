@@ -2,11 +2,14 @@
     <qresource prefix="/">
         <file>../Arquivos/clear.png</file>
         <file>../Arquivos/include.png</file>
-        <file>../Arquivos/chevron_down.png</file>
-        <file>../Arquivos/chevron_up.png</file>
         <file>../Arquivos/open.png</file>
         <file>../Arquivos/save.png</file>
-        <file>../Arquivos/grafo.png</file>
         <file>../Arquivos/PUC.png</file>
+        <file>../Arquivos/bloqueado.png</file>
+        <file>../Arquivos/cadastro.png</file>
+        <file>../Arquivos/desbloqueado.png</file>
+        <file>../Arquivos/info.png</file>
+        <file>../Arquivos/eye.png</file>
+        <file>../Arquivos/print.png</file>
     </qresource>
 </RCC>
