@@ -1,0 +1,5 @@
+-- CLASSE GRAFO -- 
+
+*Privados
+	
+*Publicos

@@ -8,6 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+#Retirar o # abaixo caso execute em LINUX
 #CONFIG += c++11
 
 TARGET = ProjetoGrafo

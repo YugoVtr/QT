@@ -179,21 +179,24 @@ void MainWindow::on_actionOpen_triggered()
     {
         this->on_pushButton_LimparVertices_clicked();
         QString nome_Do_Arquivo_No_Disco = QFileDialog::getOpenFileName(this,"Abrir Arquivo","../ProjetoGrafo/Arquivos","Arquivos Textos (*.csv *.txt)");
-        PersistenciaGrafo open(nome_Do_Arquivo_No_Disco);
-        if(graph) delete graph;
-        this->graph = open.carregar();
-        std::stack<std::string>* all_Vertices =  graph->vertice();
-        while(!all_Vertices->empty())
+        if(!nome_Do_Arquivo_No_Disco.isEmpty())
         {
-            ui->comboBox_VerticeOrigem->addItem(QString::fromStdString(all_Vertices->top()));
-            ui->comboBox_VerticeDestino->addItem(QString::fromStdString(all_Vertices->top()));
-            all_Vertices->pop();
-        }
-        ui->textEdit_Saida->setText(print_Lista());
-        if(all_Vertices) delete all_Vertices;
+            PersistenciaGrafo open(nome_Do_Arquivo_No_Disco);
+            if(graph) delete graph;
+            this->graph = open.carregar();
+            std::stack<std::string>* all_Vertices =  graph->vertice();
+            while(!all_Vertices->empty())
+            {
+                ui->comboBox_VerticeOrigem->addItem(QString::fromStdString(all_Vertices->top()));
+                ui->comboBox_VerticeDestino->addItem(QString::fromStdString(all_Vertices->top()));
+                all_Vertices->pop();
+            }
+            ui->textEdit_Saida->setText(print_Lista());
+            if(all_Vertices) delete all_Vertices;
 
-        ui->stackedWidget_Opcoes->setEnabled(true);
-        ui->groupBox_Aresta->setEnabled(true);
+            ui->stackedWidget_Opcoes->setEnabled(true);
+            ui->groupBox_Aresta->setEnabled(true);
+        }
     }catch(QString &erro){QMessageBox::information(this,"ERRO",erro);}
     catch(std::string &erro){
         QString help("--> ERRO = "+QString::fromStdString(erro));
@@ -207,7 +210,7 @@ void MainWindow::on_actionSave_triggered()
     try
     {
         if(graph->isEmpty()) throw QString("Grafo vazio");
-        QString nome_Do_Arquivo_No_Disco = QFileDialog::getSaveFileName(this,"Salvar Arquivo","../ProjetoGrafo/Arquivos","Arquivos Textos (*.csv *.txt)");
+        QString nome_Do_Arquivo_No_Disco = QFileDialog::getSaveFileName(this,"Salvar Arquivo","../ProjetoGrafo/Arquivos","Arquivos Textos (*.txt)");
         PersistenciaGrafo salvar(nome_Do_Arquivo_No_Disco);
         salvar.salvar(graph);
         QMessageBox::information(this,"Sucesso","Salvo com sucesso");

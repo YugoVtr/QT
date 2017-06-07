@@ -27,7 +27,7 @@ Grafo *PersistenciaGrafo::carregar() const
     {
         std::ifstream arquivo;
         arquivo.open(nome_No_Disco.toStdString().c_str());
-        if(!arquivo.is_open()){ throw QString("Carregar em carregar o grafo");}
+        if(!arquivo.is_open()){ throw QString("Erro em carregar o grafo");}
 
         std::string leitura;
         getline(arquivo,leitura);
