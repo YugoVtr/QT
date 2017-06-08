@@ -422,7 +422,7 @@ color: rgb(0, 0, 0);</string>
        <item row="0" column="0">
         <widget class="QStackedWidget" name="stackedWidget_Opcoes">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QGridLayout" name="gridLayout_3">
@@ -458,7 +458,7 @@ color: rgb(0, 0, 0);</string>
               <string notr="true">background-color: rgb(225, 225, 225);</string>
              </property>
              <property name="text">
-              <string> Print Path</string>
+              <string>BFS</string>
              </property>
              <property name="icon">
               <iconset resource="arquivos.qrc">

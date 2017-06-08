@@ -304,10 +304,24 @@ void MainWindow::on_pushButton_Information_clicked()
 {
     try
     {
-        QMessageBox::information(this,"HELP","Documentação não implementada");
+        std::ifstream arquivo;
+        arquivo.open("../ProjetoGrafo/Arquivos/Documentacao_ClassGrafo.txt");
+        if(!arquivo.is_open()){ throw std::string("Erro ao abrir documentação");}
+
+        std::string leitura;
+        getline(arquivo,leitura);
+        QString resultado("");
+
+        while(!arquivo.eof()) //Para todas as linhas do arquivo
+        {
+            resultado += QString::fromStdString(leitura);
+            resultado += "\n";
+            getline(arquivo,leitura);
+        }
+        arquivo.close();
+        QMessageBox::information(this,"HELP",resultado);
     }catch(std::string &erro){
         QString help("--> ERRO = "+QString::fromStdString(erro));
-        help += MENSAGEM;
         QMessageBox::information(this,"ERRO",help);
     }
 }

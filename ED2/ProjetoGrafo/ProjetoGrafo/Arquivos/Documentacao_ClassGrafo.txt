@@ -1,5 +1,24 @@
--- CLASSE GRAFO -- 
+O PROJETO GRAFO E COMPOSTOS PELOS DIRETORIOS:
 
-*Privados
-	
-*Publicos
+    FORMULARIOS:
+        Contem a implentaçao da interface;
+        CLASSES: MainWindow;
+
+    GRAFO:
+        Contem a implementaçao das classes que
+        compoem o grafo;
+        CLASSES: Aresta, Vertice, Grafo;
+
+    MATRIZ:
+        Contem a implementaçao da classe matriz
+        utilizada para manipular a matriz de adjacencia
+        no grafo. A matriz de adjacencia utilizada NÃO
+        considera os pesos das arestas, atribuindo para
+        todas peso 0;
+        CLASSES: Matriz;
+
+    PERSISTENCIA:
+        Contem a implementação da classe que
+        realiza a persistencia das informações
+        do grafo em arquivo;
+        CLASSES: PersistenciaGrafo;

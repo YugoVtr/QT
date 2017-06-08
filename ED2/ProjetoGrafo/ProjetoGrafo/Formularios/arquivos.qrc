@@ -11,5 +11,6 @@
         <file>../Arquivos/info.png</file>
         <file>../Arquivos/eye.png</file>
         <file>../Arquivos/print.png</file>
+        <file>../Arquivos/Documentacao_ClassGrafo.txt</file>
     </qresource>
 </RCC>

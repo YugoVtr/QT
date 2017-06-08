@@ -56,7 +56,6 @@ public:
     int verticeCount()const;
     int arestaCount()const;
     Matriz* toMatrix()const;
-    Grafo* fromMatrix(Matriz* matriz);
     void bfs(std::string origem);
     std::string print_path(std::string origem, std::string destino);
     void clear();

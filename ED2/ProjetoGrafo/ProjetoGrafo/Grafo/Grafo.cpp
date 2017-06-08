@@ -42,7 +42,7 @@ Grafo::~Grafo()
 /* DESCRIÇÃO: Padrão para montar a descrição da aresta.
  *            E utilizado para determinar a chave(key)
  *            da aresta dentro da tabela hash das arestas.
- * PARAMETROS: A descrição dos vertices de origem e de destino.
+ * PARAMETROS: string,string (A descrição dos vertices de origem e de destino.)
  * RETORNO: string
 */
 std::string Grafo::montarDescricaoAresta(const std::string &origem, const std::string &destino) const
@@ -54,7 +54,7 @@ std::string Grafo::montarDescricaoAresta(const std::string &origem, const std::s
  *            com aquela chave,ou seja, verifica se o vertice
  *            esta cadastrado.
  * PARAMETROS: string
- * RETORNO: string
+ * RETORNO: bool
 */
 bool Grafo::find_Vertice(const std::string &descricao) const
 {
@@ -65,7 +65,7 @@ bool Grafo::find_Vertice(const std::string &descricao) const
  *            com aquela chave,ou seja, verifica se a aresta
  *            esta cadastrada.
  * PARAMETROS: string
- * RETORNO: string
+ * RETORNO: bool
 */
 bool Grafo::find_Aresta(const std::string &origem, const std::string &destino) const
 {
@@ -73,95 +73,131 @@ bool Grafo::find_Aresta(const std::string &origem, const std::string &destino) c
     return arestas.find(descricao) != arestas.end();
 }
 
+/* DESCRIÇÃO: Cria um novo vertice no Grafo, utilizando a
+ *            descriçao para indexar o vertice na tabela
+ *            hash que guarda os vertices.
+ * PARAMETROS: string
+ * RETORNO: void
+*/
 void Grafo::createVertice(const std::string &descricao){
-    if(find_Vertice(descricao))throw std::string("Vertice já existe");
+    if(find_Vertice(descricao))throw std::string("Vertice já existe");                  //Verifica se o vertice já existe
     try
     {
-        Vertice *novoVertice = new Vertice(descricao);
-        vertices.insert({descricao,novoVertice});
+        Vertice *novoVertice = new Vertice(descricao);                                  //Cria o vertice
+        vertices.insert({descricao,novoVertice});                                       //Guarda o novo Vertice na hash 'vertices'.
     }catch(std::string &erro) { throw std::string(erro); }
      catch(std::bad_alloc) {throw std::string("Erro de alocação"); }
 }
 
-void Grafo::createAresta(std::string origem, std::string destino, int peso, bool isDirected)
+/* DESCRIÇÃO: Cria uma nova arestas no grafo, utilizando a
+ *            descriçao dos vertices de origem e destino
+ *            (ver o metodos 'montarDescricaoAresta') para
+ *            indexar a aresta na tabela hash que guarda
+ *            as arestas.
+ * PARAMETROS: string, string (Descriçao dos vertices de origem e destino)
+ * RETORNO: void
+*/
+void Grafo::createAresta(std::string origem,std::string destino,int peso,bool isDirected)
 {
-    if(find_Aresta(origem,destino))throw std::string("Aresta já existe");
+    if(find_Aresta(origem,destino))throw std::string("Aresta já existe");               //Verifica se a aresta já existe
+    if(!find_Vertice(origem) || !find_Vertice(destino))                                 //Verifica se ambos os vertices foram criados
+        {throw std::string("Erro ao Criar Aresta");}
     try{
-        std::string key = this->montarDescricaoAresta(origem,destino);
-        if(!find_Vertice(origem) || !find_Vertice(destino))
-            {throw std::string("Erro ao Criar Aresta");}
+        std::string key = this->montarDescricaoAresta(origem,destino);                  //Determina a chave para indexar a aresta
 
         Vertice *vertice_Origem = vertices[origem];
         Vertice *vertice_Destino = vertices[destino];
-        vertice_Origem->addAdjacente(vertice_Destino);
-        Aresta *ida = new Aresta(vertice_Origem,vertice_Destino,peso);
-        arestas[key] = ida;
+        vertice_Origem->addAdjacente(vertice_Destino);                                  //Adiciona o vertice destino adjacente ao
+        Aresta *ida = new Aresta(vertice_Origem,vertice_Destino,peso);                  //vertice origem  e cria a aresta.
+        arestas[key] = ida;                                                             //Inclui a aresta na hash 'arestas'
 
         if(!isDirected) {
-            vertice_Destino->addAdjacente(vertice_Origem);
-            Aresta *volta = new Aresta(vertice_Destino,vertice_Origem,peso);
-            arestas.insert({montarDescricaoAresta(destino,origem),volta});
+            vertice_Destino->addAdjacente(vertice_Origem);                              //Se a aresta não e direcionada
+            Aresta *volta = new Aresta(vertice_Destino,vertice_Origem,peso);            //Crio uma nova aresta com sentido
+            arestas.insert({montarDescricaoAresta(destino,origem),volta});              //constrario (Destino->Origem)
         }
     }catch(std::string &erro) {throw erro;}
 }
 
+/* DESCRIÇÃO: Verifica se o grafo e direcionado.
+ * PARAMETROS: --
+ * RETORNO: bool (Retorna falso se para toda aresta
+ *          que liga a->b exista uma aresta que ligue
+ *          b->a, e verdadeiro caso contrario)
+*/
 bool Grafo::isDirected() const
 {
     try
     {
-        Matriz* grafo = this->toMatrix();
-        bool resultado = !grafo->eSimetrica();
-        delete grafo;
-        return resultado;
+        Matriz* grafo = this->toMatrix();                                               //Verifica utilizando a ideia
+        bool resultado = !grafo->eSimetrica();                                          //de que um grafo não direcionado
+        delete grafo;                                                                   //possui uma matriz de incidencia
+        return resultado;                                                               //simatrica.
     }catch(std::string &erro) {throw std::string(erro);}
 }
-int Grafo::verticeCount() const{
-    return vertices.size();
+
+/* DESCRIÇÃO: Verifica a quantidade de vertices do grafo
+ * PARAMETROS: --
+ * RETORNO: int
+*/
+int Grafo::verticeCount() const
+{                                                                                       //A quantidades de vertices e
+    return vertices.size();                                                             //igual ao tamanho da lista(hash)
 }
+
+/* DESCRIÇÃO: Verifica a quantidade de aresta do grafo
+ * PARAMETROS: --
+ * RETORNO: int
+*/
 int Grafo::arestaCount() const
 {
     try
-    {
-        int sum = 0;
-        for( const auto& vertice : vertices ) {
-            sum +=  vertice.second->getAdjacentes().size( );
-        }
-        return sum;
-    }catch(std::string &erro) {throw std::string(erro);}
-}
+    {                                                                                   //Se o grafo e direcionado retorna
+        return (!this->isDirected()?(arestas.size()/2):arestas.size());                 //o tamanho da lista de arestas senão
+    }catch(std::string &erro) {throw std::string(erro);}                                //retorna o tamanho da lista dividido por 2
+}                                                                                       //pois uma aresta a->b e a mesma que b->a
 
-Grafo* Grafo::fromMatrix(Matriz* matriz)
+/* DESCRIÇÃO: Converte um Grafo em uma matriz de adjacencia
+ *            porem não armazena os pesos
+ * PARAMETROS: --
+ * RETORNO: Matriz
+*/
+Matriz *Grafo::toMatrix() const
 {
-    Grafo* grafo = new Grafo(matriz);
-    return grafo;
-}
+    if(this->isEmpty()) throw std::string("Grafo vazio");                               //Verifica se o grafo esta vazio
+    Matriz* grafoMatriz = Matriz::zeros(verticeCount());                                //Cria uma matriz contendo apenas
+                                                                                        //os vertices.
+    std::unordered_map<std::string,int> matrix;                                         //hash auxiliar utilizada enumerar
+    int i= vertices.size()-1;                                                           //os vertices.
+    for( const auto& vertice : vertices )
+        matrix[vertice.first] = i--;                                                    //Determina um numero para cada vertice
 
-Matriz *Grafo::toMatrix() const{
-    if(this->isEmpty()) throw std::string("Grafo vazio");
-    Matriz* grafoMatriz = Matriz::zeros(verticeCount());
-
-    std::unordered_map<std::string,int> matrix;
-    int i= vertices.size()-1;
-    for( const auto& vertice : vertices ) {
-        matrix[vertice.first] = i--;
-    }
-
-    for( const auto& vertice : vertices ) {
-        for( const auto& adjacente : vertice.second->getAdjacentes() ) {
-            int linha = matrix[vertice.first];
-            int coluna = matrix[adjacente.first];
-            grafoMatriz->setElemento(1,linha,coluna);
+    for( const auto& vertice : vertices ) {                                             //Para cada vertice do grafo
+        for( const auto& adjacente : vertice.second->getAdjacentes() ) {                //Percorre a lista de adjacencia
+            int linha = matrix[vertice.first];                                          //determina a linha
+            int coluna = matrix[adjacente.first];                                       // e a coluna em que existe
+            grafoMatriz->setElemento(1,linha,coluna);                                   //uma aresta
         }
     }
     return grafoMatriz;
 }
 //================ Algoritmos Cormen ===================================
+/* DESCRIÇÃO: Realiza a chamada para o BFS
+ * PARAMETROS: string (descrição do vertice de origem)
+ * RETORNO: void
+*/
 void Grafo::bfs(std::string origem)
 {
-    if(!find_Vertice(origem)){throw std::string("Vertice não pertence ao grafo"); }
-    bfs(vertices[origem]);
+    if(!find_Vertice(origem))                                                           //Verifica se o vertice existe e
+        {throw std::string("Vertice não pertence ao grafo"); }                          //busca o vertice na lista de vertices
+    bfs(vertices[origem]);                                                              //para realizar o BFS
 }
 
+/* DESCRIÇÃO: Realiza o BFS (busca em largura, descrita no livro ALGORITMOS
+ *            de THOMAS H. CORMEN 3° EDIÇAO na PAGINA  423.
+ * PARAMETROS: Vertice*
+ * RETORNO: void
+*/
 void Grafo::bfs(Vertice* origem)
 {
     this->clear();
@@ -175,7 +211,7 @@ void Grafo::bfs(Vertice* origem)
     {
         Vertice* u = Q.front();
         Q.pop();
-        for( const auto& i : u->getAdjacentes() )
+        for(const auto& i : u->getAdjacentes())
         {
             Vertice *v = i.second;
             if(v->getCor()==branco)
@@ -189,6 +225,11 @@ void Grafo::bfs(Vertice* origem)
         u->setCor(preto);
     }
 }
+
+/* DESCRIÇÃO: Realiza a chamada o print_path
+ * PARAMETROS: string (descrição do vertice de origem e destino)
+ * RETORNO: void
+*/
 std::string Grafo::print_path(std::string origem, std::string destino)
 {
     try{
@@ -198,6 +239,12 @@ std::string Grafo::print_path(std::string origem, std::string destino)
     }catch(std::string &erro){throw std::string(erro);}
 }
 
+/* DESCRIÇÃO: Realiza o print_path (que determina o caminho minimo
+ *            da origem ao destino em um grafo não ponderado, descrita
+ *            no livro ALGORITMOS de THOMAS H. CORMEN 3° EDIÇAO na PAGINA  427.
+ * PARAMETROS: Vertice,Vertice (os Vertices de origem e de destino)
+ * RETORNO: string (que mostra o caminho da origem até o destino)
+*/
 std::string Grafo::print_path(Vertice origem,Vertice destino)
 {
     try{
@@ -217,6 +264,11 @@ std::string Grafo::print_path(Vertice origem,Vertice destino)
         return "";
 }
 
+/* DESCRIÇÃO: Converte um inteiro em seu respectivo caracter representado
+ *            na tabela ascii. (Utilizado para das nome aos vertices)
+ * PARAMETROS: int
+ * RETORNO: string
+*/
 std::string Grafo::intToString(int i) const
 {
     char a = (char) i+65;
@@ -225,12 +277,22 @@ std::string Grafo::intToString(int i) const
     return b;
 }
 
+/* DESCRIÇÃO: atribui a distancia de todos os vertices como INFINITA,
+ *            seus predecessores como NIL e suas cores como BRANCA.
+ * PARAMETROS: int
+ * RETORNO: string
+*/
 void Grafo::clear()
 {
     for( const auto& vertice : vertices )
         vertice.second->clear();
 }
 
+/* DESCRIÇÃO: Retorna a descriçao de todos os
+ *            vertices do grafo.
+ * PARAMETROS: --
+ * RETORNO: stack<string> (Uma pilha de string)
+*/
 std::stack<std::string> *Grafo::vertice()
 {
     std::stack<std::string> *all_Vertices = new std::stack<std::string>();
@@ -240,6 +302,12 @@ std::stack<std::string> *Grafo::vertice()
     return all_Vertices;
 }
 
+/* DESCRIÇÃO: Retorna a descriçao de todas as
+ *            arestas de um determinado vertice.
+ * PARAMETROS: string (Descriçao do vertice das quais se quer
+ *             as arestas)
+ * RETORNO: stack<string> (Uma pilha de string)
+*/
 std::stack<std::string>* Grafo::aresta(const std::string &origem)
 {
     if(vertices.find(origem) == vertices.end())
